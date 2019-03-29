@@ -18,9 +18,30 @@ public class map extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	private CarSharingBoard board;
+	private boolean todos;
+	private int conductor;
 	
+	
+	public boolean isTodos() {
+		return todos;
+	}
+
+	public void setTodos(boolean todos) {
+		this.todos = todos;
+	}
+
+	public int isConductor() {
+		return conductor;
+	}
+
+	public void setConductor(int conductor) {
+		this.conductor = conductor;
+	}
+
 	public map() {
 		setDoubleBuffered(false);
+		setTodos(true);
+		setConductor(0);
 	}
 	
 	public List<UserExtended> getConductoresS1() {
@@ -69,12 +90,16 @@ public class map extends JPanel implements ActionListener {
             	g.setColor(Color.red);
             	
 //            	System.out.println(numUsers);
-            	for(int i = 0; i < board.getConductoresS1().size(); i++) {
-            		
-            		if(board.getConductoresS1().get(i).isActive()) {
-            			printFrom2Coord(board.getConductoresS1().get(i), g);
-            		}
-            	}
+            	
+            	if(this.isTodos()) {
+            		for(int i = 0; i < board.getConductoresS1().size(); i++)
+                		if(board.getConductoresS1().get(i).isActive())
+                			printFrom2Coord(board.getConductoresS1().get(i), g);
+            	}else {
+            		if(board.getConductoresS1().get(isConductor()).isActive()) 
+            			printFrom2Coord(board.getConductoresS1().get(isConductor()), g);
+                }
+            	
             	
             	
               	for(int i = 0; i < numUsers; i++) {
@@ -188,7 +213,6 @@ public class map extends JPanel implements ActionListener {
 		
 		if(x<0||x>800) {
 			velX = -velX;
-
 		}
 		if(y<0||y>800) velY = -velY;
 		
