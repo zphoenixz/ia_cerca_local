@@ -28,7 +28,7 @@ import aima.search.informed.SimulatedAnnealingSearch;
 public class Interface extends JFrame implements ActionListener{
 
 	/**
-	 * 
+	 * Ramiro Valdez
 	 */
 	private static final long serialVersionUID = 1L;
 	
@@ -196,6 +196,9 @@ public void initExtras(){
         
         this.plane2d.setBoard(board);
         
+//        System.out.println("INITIAL BOARD #####");
+//        board.printInitialSolution(board.getConductoresS1(), 1);
+        
         Search search=null; 
         Problem p;
            if (heuSel == 1)p = new Problem(board, new CarSharingSuccessorFunction(), new CarSharingGoalTest(), new CarSharingHeuristicFunction1());
@@ -206,20 +209,20 @@ public void initExtras(){
         // Instantiate the SearchAgent object
         SearchAgent agent;
 		try {
-			
 			agent = new SearchAgent(p, search);
-			  // We print the results of the search
-			System.out.println("===ACTIONS===");
-	        printActions(agent.getActions(), board);
-	        String resp = board.alertSolution(board.getConductoresS1());
-//	        System.out.println("===INSTUMENTATION===");
-	        resp += printInstrumentation(agent.getInstrumentation());
-//	       	System.out.println("SOLUCION DENTRO DESPUES DE PRINT ACTIONS");
-	    	board.printInitialSolution(board.getConductoresS1(),1);	
+			System.out.println("FINAL BOARD #####");
+	    	CarSharingBoard pf= (CarSharingBoard) search.getGoalState();
+	    	pf.printInitialSolution(pf.getConductoresS1(), 1);
 	    	
-	    	 long estimatedTime = System.nanoTime() - startTime;
-	         System.out.println("Execution Time [seg]: " + estimatedTime/1000000000);
-	         System.out.println("######################################");
+//	        printActions(agent.getActions(), board);
+	        String resp = pf.alertSolution(pf.getConductoresS1());
+	        resp += printInstrumentation(agent.getInstrumentation());
+//	    	board.printInitialSolution(board.getConductoresS1(),1);	
+	 
+	    	this.plane2d.setBoard(pf);
+	    	long estimatedTime = System.nanoTime() - startTime;
+	        System.out.println("Execution Time [seg]: " + estimatedTime/1000000000);
+	        System.out.println("######################################");
 	    	JOptionPane.showMessageDialog(null, resp);
 	    	
 		} catch (Exception e) {
@@ -240,33 +243,35 @@ public void initExtras(){
         return S;
     }
     
-    private static void printActions(List<Object> actions, CarSharingBoard board) {
-           for (Object action1 : actions) {
-               String action = (String) action1;
-               applyOperator(action, board);    
-           }
-    }
+//    private static void printActions(List<Object> actions, CarSharingBoard board) {
+//    	System.out.println( actions.get(0));
+//           for (Object action1 : actions) {
+//               String action = (String) action1;
+//               System.out.println(action);
+//               applyOperator(action, board);    
+//           }
+//    }
 	
     
-    public static void applyOperator(String action, CarSharingBoard board) {
-    	String[] actions = action.split("-");
-    	String operator = actions[0];
-    	int i = Integer.parseInt(actions[1]);
-    	
-    	System.out.println(action);
-    	if(operator.equals("Intercambiar")) {
-    		int j = Integer.parseInt(actions[3]);
-    		board.swapUsuarios(i, j);
-    	}else if(operator.equals("Mover")) {
-    		int j = Integer.parseInt(actions[3]);
-    		board.moverUsuario(board.getUsuarios().get(i), i, board.getConductoresS1().get(j));
-    	}else if(operator.equals("Subir prioridad recoger"))
-    		board.subirPrioridadRecoger(board.getUsuarios().get(i), i);
-    	else if(operator.equals("Subir prioridad dejar"))
-    		board.subirPrioridadDejar(board.getUsuarios().get(i), i);
-    	else 
-    		System.out.println("Operador no identificado");
-    }
+//    public static void applyOperator(String action, CarSharingBoard board) {
+//    	String[] actions = action.split("-");
+//    	String operator = actions[0];
+//    	int i = Integer.parseInt(actions[1]);
+//    	
+//    	System.out.println(action);
+//    	if(operator.equals("Intercambiar")) {
+//    		int j = Integer.parseInt(actions[3]);
+//    		board.swapUsuarios(i, j);
+//    	}else if(operator.equals("Mover")) {
+//    		int j = Integer.parseInt(actions[3]);
+//    		board.moverUsuario(board.getUsuarios().get(i), i, board.getConductoresS1().get(j));
+//    	}else if(operator.equals("Subir prioridad recoger"))
+//    		board.subirPrioridadRecoger(board.getUsuarios().get(i), i);
+//    	else if(operator.equals("Subir prioridad dejar"))
+//    		board.subirPrioridadDejar(board.getUsuarios().get(i), i);
+//    	else 
+//    		System.out.println("Operador no identificado");
+//    }
     
 	@Override
 	public void actionPerformed(ActionEvent e) {
