@@ -28,11 +28,11 @@ import aima.search.informed.SimulatedAnnealingSearch;
 public class Interface extends JFrame implements ActionListener{
 
 	/**
-	 * Ramiro Valdez
+	 * Phoenixz
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private JButton go;
+	private JButton go, plus, minus, all;
 	private JLabel userLabel, conductLabel, solLabel, heuristicLabel, seedLabel, searchAlgLabel;
 	private JTextField userTF, conductTF, seedTF, searchAlg;
 	private JComboBox initSol, heuristic;
@@ -43,7 +43,16 @@ public class Interface extends JFrame implements ActionListener{
 	
 	private int leftUpperCornerX = 30;
 	private int leftUpperCornerY = 815;
+	private int numConduct;
 	
+	public int getNumConduct() {
+		return numConduct;
+	}
+
+	public void setNumConduct(int numConduct) {
+		this.numConduct = numConduct;
+	}
+
 	private Color F1 = new Color(128, 187, 193),F2 = new Color(249,250,237);
 	
 	public Interface() {
@@ -129,7 +138,7 @@ public void initExtras(){
 		
 		//-------------------------------------------
 		solLabel = new JLabel();
-		solLabel.setBounds(leftUpperCornerX+270,leftUpperCornerY, 200, 30);
+		solLabel.setBounds(leftUpperCornerX+200,leftUpperCornerY, 200, 30);
 		solLabel.setFont(f1);
 		solLabel.setForeground(new Color(48, 107, 113));
 		solLabel.setBackground(F1);
@@ -137,13 +146,13 @@ public void initExtras(){
 		solLabel.setText("Sol. Inicial");
 		//-------------------------------------------
 		initSol = new JComboBox();
-		initSol.setBounds(leftUpperCornerX+270,leftUpperCornerY+30, 180, 35);
+		initSol.setBounds(leftUpperCornerX+200,leftUpperCornerY+30, 180, 35);
 		initSol.setFont(f2);
 		initSol.addItem("       1");initSol.addItem("       2");
 		this.add(initSol);
 		//-------------------------------------------
 		heuristicLabel = new JLabel();
-		heuristicLabel.setBounds(leftUpperCornerX+270,leftUpperCornerY+65, 190, 30);
+		heuristicLabel.setBounds(leftUpperCornerX+200,leftUpperCornerY+65, 190, 30);
 		heuristicLabel.setFont(f1);
 		heuristicLabel.setForeground(new Color(48, 107, 113));
 		heuristicLabel.setBackground(F1);
@@ -151,7 +160,7 @@ public void initExtras(){
 		heuristicLabel.setText("Heuristico");
 		//-------------------------------------------
 		heuristic = new JComboBox();
-		heuristic.setBounds(leftUpperCornerX+270,leftUpperCornerY+95, 180, 35);
+		heuristic.setBounds(leftUpperCornerX+200,leftUpperCornerY+95, 180, 35);
 		heuristic.setFont(f2);
 		heuristic.addItem("       1");heuristic.addItem("       2");
 		this.add(heuristic);
@@ -176,13 +185,36 @@ public void initExtras(){
 		this.add(seedTF);
 		//-------------------------------------------
 		go = new JButton("INICIAR");
-		go.setBounds(leftUpperCornerX+500,leftUpperCornerY+40,250,130);
+		go.setBounds(leftUpperCornerX+500,leftUpperCornerY+40,250,135);
 		go.setFont(f3);
 		go.setBorderPainted(true);
 		go.addActionListener(this);
 		go.setVisible(true);
 		this.add(go);
-		
+		//-------------------------------------------
+		plus = new JButton("+");
+		plus.setBounds(leftUpperCornerX+450, leftUpperCornerY+40, 45, 45);
+		plus.setFont(f3);
+		plus.setBorderPainted(true);
+		plus.addActionListener(this);
+		plus.setVisible(true);
+		this.add(plus);
+		//-------------------------------------------
+		all = new JButton("o");
+		all.setBounds(leftUpperCornerX+450, leftUpperCornerY+85, 45, 45);
+		all.setFont(f3);
+		all.setBorderPainted(true);
+		all.addActionListener(this);
+		all.setVisible(true);
+		this.add(all);
+		//-------------------------------------------
+		minus = new JButton("-");
+		minus.setBounds(leftUpperCornerX+450, leftUpperCornerY+130, 45, 45);
+		minus.setFont(f3);
+		minus.setBorderPainted(true);
+		minus.addActionListener(this);
+		minus.setVisible(true);
+		this.add(minus);
 
 	
 
@@ -193,6 +225,7 @@ public void initExtras(){
 		long startTime = System.nanoTime();
 		CarSharingBoard board = new CarSharingBoard(users, cond, seed); //parámetros para llamar a la constructora del board
         board.solucionInicial(solSel);
+        setNumConduct(board.getNumConductores());
         
         this.plane2d.setBoard(board);
         
@@ -205,7 +238,7 @@ public void initExtras(){
            else p = new Problem(board, new CarSharingSuccessorFunction(), new CarSharingGoalTest(), new CarSharingHeuristicFunction2());
      
         if (alg==1) search =  new HillClimbingSearch();
-        if (alg==2) search =  new SimulatedAnnealingSearch(2000,100,5,0.001); //parámetros simulated annealing segun digan experimentos
+        if (alg==2) search =  new SimulatedAnnealingSearch(500,100,5,0.001); //parámetros simulated annealing segun digan experimentos
         // Instantiate the SearchAgent object
         SearchAgent agent;
 		try {
@@ -303,6 +336,21 @@ public void initExtras(){
 			initSearch(users, cond, seed, solSel, heuSel, searchAlg);
 			
 			
+		}else if(e.getSource() == all) {
+			if(plane2d.isTodos())
+				plane2d.setTodos(false);
+			else
+				plane2d.setTodos(true);
+		}else if(e.getSource() == plus) {
+			int incremento = plane2d.isConductor() + 1;
+			plane2d.setTodos(false);
+			if( incremento < getNumConduct() )
+				plane2d.setConductor(incremento);	
+		}else if(e.getSource() == minus) {
+			plane2d.setTodos(false);
+			int decremento = plane2d.isConductor() - 1;
+			if( decremento >= 0)
+				plane2d.setConductor(decremento);
 		}else if(e.getSource() == checkboxSeed) {
 			if(checkboxSeed.isSelected()) {
 				seedTF.setEnabled(false);
@@ -322,5 +370,3 @@ public void initExtras(){
 
 	}	
 }
-
-
